@@ -69,10 +69,37 @@ myfunc <- function(x,
 
 #Apply function to each variable
 
+#### To address Feedback 1####
 
-myfunc(RedWines$quality, name="wine quality", 
-  xlab="quality")
+mystats <- function(x1)                                         # Function to print summary, mean, sd, quntile
+{
+        print (summary(x1))                                     # print summary
+        print (mean(x1))                                        # print mean of the variable
+        print (sd(x1))                                          # Print Standard deviation
+        print (quantile(x1, c(0.1,0.5,0.9)))                    # Print quantile
+}
 
+# Wine quality graph
+ggplot(RedWines, aes(x=quality)) +
+     geom_histogram(binwidth=1, colour="black", fill="blue") +
+     labs(title="Wine Quality Histogram")
+mystats(RedWines$quality)                                       # Print stats
+
+# free.sulfur.dioxide in wine 
+ggplot(RedWines, aes(x=free.sulfur.dioxide)) +
+     geom_histogram(binwidth=1, colour="black", fill="blue") +
+     labs(title="free.sulfur.dioxide Histogram")
+mystats(RedWines$free.sulfur.dioxide)                           # Print stats
+
+# total.sulfur.dioxide graph
+ggplot(RedWines, aes(x=total.sulfur.dioxide)) +
+     geom_histogram(binwidth=1, colour="black", fill="blue") +
+     labs(title="total.sulfur.dioxide Histogram")
+mystats(RedWines$total.sulfur.dioxide)                         # Print stats
+
+
+
+################################
 
 myfunc(RedWines$fixed.acidity, name="fixed.acidity in wine", 
   xlab="fixed.acidity")
@@ -89,12 +116,15 @@ myfunc(RedWines$residual.sugar, name="residual.sugar in wine",
 
 myfunc(RedWines$chlorides, name="chlorides in wine", 
   xlab="chlorides")
+############################################################### 
+### to address feedback 1###
 
-myfunc(RedWines$free.sulfur.dioxide, name="free.sulfur.dioxide in wine", 
-  xlab="free.sulfur.dioxide")
+### myfunc(RedWines$free.sulfur.dioxide, name="free.sulfur.dioxide in wine", 
+###  xlab="free.sulfur.dioxide")
 
-myfunc(RedWines$total.sulfur.dioxide, name="total.sulfur.dioxide in wine", 
-  xlab="total.sulfur.dioxide")
+### myfunc(RedWines$total.sulfur.dioxide, name="total.sulfur.dioxide in wine", 
+###  xlab="total.sulfur.dioxide")
+##############################################################
 
 myfunc(RedWines$density, name="density in wine", 
   xlab="density")
@@ -562,45 +592,42 @@ I made a model that uses the volatile acidity, alcohol, and sulphates content of
 ```{r echo=FALSE, Plot_One, warning=FALSE, fig.width=10, fig.height=10}
 
 
-grid.arrange(ggplot(data = RedWines, aes(x = factor(quality), y = fixed.acidity,
-                                   fill = quality)) + 
+grid.arrange(ggplot(data = RedWines, aes(x = factor(quality), y = fixed.acidity)) + 
                ylab('fixed.acidity') +
                xlab('Quality') +
                geom_boxplot(),
-             ggplot(data = RedWines, aes(x = factor(quality), y = volatile.acidity,
-                                   fill = quality)) +
+             ggplot(data = RedWines, aes(x = factor(quality), y = volatile.acidity)) +
                ylab('volatile.acidity') +
                xlab('Quality') +
                geom_boxplot(), 
-             ggplot(data = RedWines, aes(x = factor(quality), y = citric.acid,
-                                   fill = quality)) +
+             ggplot(data = RedWines, aes(x = factor(quality), y = citric.acid)) +
                ylab('citric.acid') +
                xlab('Quality') +
                geom_boxplot(), 
-             ggplot(data = RedWines, aes(x = factor(quality), y = pH,
-                                   fill = quality)) +
+             ggplot(data = RedWines, aes(x = factor(quality), y = pH)) +
                ylab('pH') +
                xlab('Quality') +
-               geom_boxplot())
+               geom_boxplot(), main="Relation between quality and highest correlated variables")
 
 
 ```
 
 ### Description One
 
-*       Higher acidity (or lower pH) is seen in highly-rated wines. 
+*       The mean values of fixed.acidity tend to increase as the quality goes up. The best wines come in over 8 while the worst wines did not even reach about 8. Loosely speaking, higher fixed.acidity content correlated with higher wine quality.
 
-*       Presence of volatile (acetic) acid negatively affected wine quality. 
+*       The mean values of volatile.acidity tend to decrease as the quality goes up. The best wines come in at about .4 while the worst wines reach about .8. This is opposite to what we just discovered about fixed.acidity above.
 
-*       Citric acidity had a high correlation with wine quality. 
 
-*       Fixed acidity (tartaric) acid had a smaller impact.
+*       The mean values of citric acid tend to increase as the quality goes up. The best wines come in over 0.375 while the worst wines are lower than 0.125. Citric acidity had a high correlation with wine quality.
+
+*       The mean values of pH tend to decrease as the quality goes up. The best wines is less than 3.25  while the worst wines always higher than 3.25. From pH graph 3 different clusters trending (3 & 4, 5 & 6, 7 & 8) can be oberved.
+
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two, warning=FALSE, fig.width=10, fig.height=10}
 
-ggplot(data = RedWines, aes(x = factor(quality), y = alcohol,
-                      fill = quality)) +
+ggplot(data = RedWines, aes(x = factor(quality), y = alcohol)) +
   geom_boxplot() +
   ggtitle('Alcohol Levels vs. Wine Qualities') +
   xlab('Quality') +
@@ -610,9 +637,7 @@ ggplot(data = RedWines, aes(x = factor(quality), y = alcohol,
 
 ### Description Two
 
-*       The above graph demonstrates the effect of alcohol content on wine quality. 
-
-*       Higher alcohol content correlated with higher wine quality. 
+*       The above graph demonstrates the effect of alcohol content on wine quality. The mean values alcohol percentage in relation to quality increase as the quality goes up. The worst wines average about 10% alcohol while the best average just above 12% alcohol. The only deviation from this trend is wines rated a 5 which tend to be lower than expected coming in around 9.7% alcohol. loosely speaking, higher alcohol content correlated with higher wine quality. 
 
 *       There are some outliers and intervals that points that alchol content alone did not produce a higher quality.
 
@@ -630,7 +655,7 @@ ggplot(data = RedWines,
 
 ### Description Three
 
-This is improtant if not the important graph.  As the correlation tests showed, wine quality was affected most strongly by alcohol and volaticle acidity. A combination of high alcohol content and low volatile acidity produced better wines.
+This is improtant if not the important graph.  As the correlation tests showed, wine quality was affected most strongly by alcohol and volaticle acidity. A combination of high alcohol content and low volatile acidity produced better wines. This gives me a general sense that a wine with higher alcohol and lower volatile acidity will be rated higher.
 
 ------
 
